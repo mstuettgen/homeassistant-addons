@@ -1,4 +1,5 @@
 # Senec Web2MQTT
+Reads stats from Senec Web API and publishes them as MQTT device to home assistant
 
 ## Getting started
 I is not really an "addon" at this point, it's more of a working prototype.
