@@ -67,3 +67,7 @@ sudo systemctl enable senecweb2mqtt.service
 sudo systemctl start senecweb2mqtt.service
 sudo systemctl status senecweb2mqtt.service
 ```
+
+![grafik](https://github.com/mstuettgen/homeassistant-addons/assets/10927858/a0d2c28b-7ee6-4267-847b-80b5509108c0)
+
+
