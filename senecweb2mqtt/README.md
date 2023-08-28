@@ -1,7 +1,7 @@
 # Senec Web2MQTT
 Reads stats from Senec Web API and publishes them as MQTT device to home assistant
 
-## Getting started
+## DISCLAIMER
 I is not really an "addon" at this point, it's more of a working prototype.
 
 ### Requirements
@@ -23,7 +23,7 @@ enter your device information in te following lines:
 self._MQTT_USERNAME = ""  # your mqtt username
 self._MQTT_PASSWORD =  "" # your mqtt password
 self._MQTT_HOST = "" # IP adress of homeassitant when using home assistant mqtt broker, else IP adress of broker
-self._MQTT_PORT = "1883" # default MQTT port
+self._MQTT_PORT = 1883 # default MQTT port, IMPORTANT, must be Number, not a String!
 
 self._SENSOR_NAME_PREFIX = "senec" #arbitrary, used for sensor name generation. results in e.g. "senec_acculevel_now" as sensorname
 self._DEVICE_NAME = "Senec Home V4" #arbitrary, used to generate the name of the MQTT device in HA
