@@ -43,7 +43,7 @@ class SenecWebGrabber:
         self._energy_entities = {}
         self._power_entities = {}
         self._battery_entities = {}
-        self.isAuthenticated = False
+        self._isAuthenticated = False
 
         #WEBSESSION
         self._session = requests.Session()
@@ -57,7 +57,7 @@ class SenecWebGrabber:
         r = self._session.post(self._SENEC_AUTH_URL, auth_payload)
         if r.status_code == 200:
             logger.info("Login successful")
-            self.isAuthenticated=True
+            self._isAuthenticated=True
         else:
             logger.info("Login failed with Code " + str(r.status_code))
     
@@ -66,7 +66,7 @@ class SenecWebGrabber:
     def update(self) -> None:
         logger.debug("***** update(self) ********")
 
-        if self.isAuthenticated:
+        if self._isAuthenticated:
             self.update_now_kW_stats()
             self.update_full_kWh_stats()
 
@@ -129,7 +129,7 @@ class SenecWebGrabber:
                 entity_name = str(key + "_total")
                 self._energy_entities[entity_name]=value
             else:
-                self.isAuthenticated=False
+                self._isAuthenticated=False
                 self.update()
 
 
