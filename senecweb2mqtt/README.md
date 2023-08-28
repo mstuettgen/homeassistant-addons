@@ -12,13 +12,7 @@ When setting up the MQTT integration, use "core-mosquitto" as MQTT broker when y
 ### Configuration 
 #### "senec_webgrabber.py" :
 
-enter your senec credentials in the following lines:
-```
-self._SENEC_USERNAME = "" # your senec login username
-self._SENEC_PASSWORD = "" # your senec password
-```
-
-example:
+enter your senec credentials in the following lines (example):
 ```
 self._SENEC_USERNAME = "myawesomename@mail.com" # your senec login username
 self._SENEC_PASSWORD = "mysupersafesenecpw" # your senec password
@@ -26,7 +20,7 @@ self._SENEC_PASSWORD = "mysupersafesenecpw" # your senec password
 
 #### "senec_mqtt_device.py" :
 
-enter your device information in the following lines:
+enter your device information in the following lines (example):
 ```
 self._MQTT_USERNAME = "homeassistant"  # your mqtt username
 self._MQTT_PASSWORD =  "homeassistant" # your mqtt password
