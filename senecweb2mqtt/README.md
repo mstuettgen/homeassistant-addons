@@ -9,20 +9,28 @@ I is not really an "addon" at this point, it's more of a working prototype.
 - The HA MQTT Integration. Can be installed by going to Settings -> Devices and Services -> Add Integration -> MQTT. 
 When setting up the MQTT integration, use "core-mosquitto" as MQTT broker when you are using the Mosquitto-Addon. Else use te IP adress of your own MQTT broker
 
-### Configuration
-in "senec_webgrabber.py" :
+### Configuration 
+#### "senec_webgrabber.py"
+
 enter your senec credentials in the following lines:
 ```
 self._SENEC_USERNAME = "" # your senec login username
 self._SENEC_PASSWORD = "" # your senec password
 ```
 
-in "senec_mqtt_device.py" :
+example:
+```
+self._SENEC_USERNAME = "myawesomename@mail.com" # your senec login username
+self._SENEC_PASSWORD = "mysupersafesenecpw" # your senec password
+```
+
+#### "senec_mqtt_device.py" :
+
 enter your device information in te following lines:
 ```
-self._MQTT_USERNAME = ""  # your mqtt username
-self._MQTT_PASSWORD =  "" # your mqtt password
-self._MQTT_HOST = "" # IP adress of homeassitant when using home assistant mqtt broker, else IP adress of broker
+self._MQTT_USERNAME = "homeassistant"  # your mqtt username
+self._MQTT_PASSWORD =  "homeassistant" # your mqtt password
+self._MQTT_HOST = "192.168.1.50" # IP adress of homeassitant when using home assistant mqtt broker, else IP adress of broker
 self._MQTT_PORT = 1883 # default MQTT port, IMPORTANT, must be Number, not a String!
 
 self._SENSOR_NAME_PREFIX = "senec" #arbitrary, used for sensor name generation. results in e.g. "senec_acculevel_now" as sensorname
