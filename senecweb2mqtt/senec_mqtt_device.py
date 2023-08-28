@@ -22,7 +22,7 @@ class SenecMQTTDevice():
         self._MQTT_USERNAME = ""  # your mqtt username
         self._MQTT_PASSWORD =  "" # your mqtt password
         self._MQTT_HOST = "" # IP adress of homeassitant when using home assistant mqtt broker, else IP adress of broker
-        self._MQTT_PORT = "1883" # default MQTT port
+        self._MQTT_PORT = 1883 # default MQTT port
         self._TOPIC_PREFIX = "homeassistant/sensor/" # topic that our mqtt data is published to
         self._SENSOR_NAME_PREFIX = "senec" #arbitrary, used for sensor name generation. results in e.g. "senec_acculevel_now" as sensorname
         self._DEVICE_NAME = "Senec Home V4" #arbitrary, used to generate the name of the MQTT device in HA
