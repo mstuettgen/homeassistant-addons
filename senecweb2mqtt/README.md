@@ -10,7 +10,7 @@ I is not really an "addon" at this point, it's more of a working prototype.
 When setting up the MQTT integration, use "core-mosquitto" as MQTT broker when you are using the Mosquitto-Addon. Else use te IP adress of your own MQTT broker
 
 ### Configuration 
-#### "senec_webgrabber.py"
+#### "senec_webgrabber.py" :
 
 enter your senec credentials in the following lines:
 ```
@@ -26,7 +26,7 @@ self._SENEC_PASSWORD = "mysupersafesenecpw" # your senec password
 
 #### "senec_mqtt_device.py" :
 
-enter your device information in te following lines:
+enter your device information in the following lines:
 ```
 self._MQTT_USERNAME = "homeassistant"  # your mqtt username
 self._MQTT_PASSWORD =  "homeassistant" # your mqtt password
