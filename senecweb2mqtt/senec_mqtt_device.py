@@ -26,11 +26,11 @@ class SenecMQTTDevice():
         self._TOPIC_PREFIX = "homeassistant/sensor/" # topic that our mqtt data is published to
         self._SENSOR_NAME_PREFIX = "senec" #arbitrary, used for sensor name generation. results in e.g. "senec_acculevel_now" as sensorname
         self._DEVICE_NAME = "Senec Home V4" #arbitrary, used to generate the name of the MQTT device in HA
-        self._DEVICE_IDENFIER = "XXXXXXXXXXXXXXX" #serial number of your senec (can be looked up in app), used for generation of entity unique ids
+        self._DEVICE_IDENTIFIER = "XXXXXXXXXXXXXXX" #serial number of your senec (can be looked up in app), used for generation of entity unique ids
         self._DEVICE_MANUFACTURER = "Senec" #arbitrary, will be shown in MQTT device information
         self._DEVICE_MODEL = "Home V4" #arbitrary, will be shown in MQTT device information
         self._DEVINCE_INFO = {
-            "identifiers": [self._DEVICE_IDENFIER], 
+            "identifiers": [self._DEVICE_IDENTIFIER], 
             "name":  self._DEVICE_NAME,
             "manufacturer": self._DEVICE_MANUFACTURER, 
             "model": self._DEVICE_MODEL
@@ -181,7 +181,7 @@ class SenecMQTTDevice():
             "state_class": "measurement",
             "unit_of_measurement": "%",
             "state_topic":  state_topic,
-            "unique_id": str(self._DEVICE_IDENFIER + "_" + sensor_name),
+            "unique_id": str(self._DEVICE_IDENTIFIER + "_" + sensor_name),
             "object_id" : sensor_name,
             "qos" : 0,
             "retain" : True,
@@ -197,7 +197,7 @@ class SenecMQTTDevice():
             "state_class" : "measurement",
             "unit_of_measurement" : "kW",
             "state_topic":  state_topic,
-            "unique_id": str(self._DEVICE_IDENFIER + "_" + sensor_name),
+            "unique_id": str(self._DEVICE_IDENTIFIER + "_" + sensor_name),
             "object_id" : sensor_name,
             "qos" : 0,
             "retain" : True,
@@ -213,7 +213,7 @@ class SenecMQTTDevice():
             "state_class": "total_increasing",
             "unit_of_measurement": "kWh",
             "state_topic":  state_topic,
-            "unique_id": str(self._DEVICE_IDENFIER + "_" + sensor_name),
+            "unique_id": str(self._DEVICE_IDENTIFIER + "_" + sensor_name),
             "object_id" : sensor_name,
             "qos" : 0,
             "retain" : True,
