@@ -54,13 +54,15 @@ class SenecWebGrabber:
             "username" : self._SENEC_USERNAME,
             "password" : self._SENEC_PASSWORD
         }
-        r = self._session.post(self._SENEC_AUTH_URL, auth_payload)
-        if r.status_code == 200:
-            logger.info("Login successful")
-            self._isAuthenticated=True
-        else:
-            logger.info("Login failed with Code " + str(r.status_code))
-    
+        try:
+            r = self._session.post(self._SENEC_AUTH_URL, auth_payload)
+            if r.status_code == 200:
+                logger.info("Login successful")
+                self._isAuthenticated=True
+            else:
+                logger.info("Login failed with Code " + str(r.status_code))
+        except:
+            logger.info("authenticate(self): Authentication not possible")    
 
 
     def update(self) -> None:
@@ -89,49 +91,53 @@ class SenecWebGrabber:
 
     def update_now_kW_stats(self) -> None:
         logger.debug("***** update_now_kW_stats(self) ********")
-        
-        #grab NOW and TODAY stats
-        r=self._session.get(self._SENEC_API_OVERVIEW_URL)
-        
-        if r.status_code==200:
-            r_json = json.loads(r.text)
-            #logger.debug(r_json)
+        try:
+            #grab NOW and TODAY stats
+            r=self._session.get(self._SENEC_API_OVERVIEW_URL)
             
-            for key in (self._API_KEYS+self._API_KEYS_EXTRA):
-                if(key!="acculevel"):
-                    value_now = r_json[key]["now"]
-                    entity_now_name = str(key + "_now")
-                    self._power_entities[entity_now_name]=value_now
-
-                    value_today = r_json[key]["today"]
-                    entity_today_name = str(key + "_today")
-                    self._energy_entities[entity_today_name]=value_today
-                else:
-                    value_now = r_json[key]["now"]
-                    entity_now_name = str(key + "_now")
-                    self._battery_entities[entity_now_name]=value_now
-
-                    #value_today = r_json[key]["today"]
-                    #entity_today_name = str(key + "_today")
-                    #self._battery_entities[entity_today_name]=value_today
-        else:
-            self._isAuthenticated=False
-            self.update()
-        
-    def update_full_kWh_stats(self) -> None:
-        #grab TOTAL stats
-        for key in self._API_KEYS:
-            api_url = self._SENEC_API_URL_START + key + self._SENEC_API_URL_END
-            r=self._session.get(api_url)
             if r.status_code==200:
                 r_json = json.loads(r.text)
-                value = r_json["fullkwh"]
-                entity_name = str(key + "_total")
-                self._energy_entities[entity_name]=value
+                #logger.debug(r_json)
+                
+                for key in (self._API_KEYS+self._API_KEYS_EXTRA):
+                    if(key!="acculevel"):
+                        value_now = r_json[key]["now"]
+                        entity_now_name = str(key + "_now")
+                        self._power_entities[entity_now_name]=value_now
+
+                        value_today = r_json[key]["today"]
+                        entity_today_name = str(key + "_today")
+                        self._energy_entities[entity_today_name]=value_today
+                    else:
+                        value_now = r_json[key]["now"]
+                        entity_now_name = str(key + "_now")
+                        self._battery_entities[entity_now_name]=value_now
+
+                        #value_today = r_json[key]["today"]
+                        #entity_today_name = str(key + "_today")
+                        #self._battery_entities[entity_today_name]=value_today
             else:
                 self._isAuthenticated=False
                 self.update()
-
+        except:
+            logger.info("update_now_kW_stats(self): Unable to read from WebAPI")            
+        
+    def update_full_kWh_stats(self) -> None:
+        try:
+            #grab TOTAL stats
+            for key in self._API_KEYS:
+                api_url = self._SENEC_API_URL_START + key + self._SENEC_API_URL_END
+                r=self._session.get(api_url)
+                if r.status_code==200:
+                    r_json = json.loads(r.text)
+                    value = r_json["fullkwh"]
+                    entity_name = str(key + "_total")
+                    self._energy_entities[entity_name]=value
+                else:
+                    self._isAuthenticated=False
+                    self.update()
+        except:
+            logger.info("update_full_kWh_stats(self): Unable to read from WebAPI")           
 
 if __name__=="__main__":
     main()
