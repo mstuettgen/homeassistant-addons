@@ -71,6 +71,9 @@ class SenecMQTTDevice():
         self._mqtt_client.connect(self._MQTT_HOST, self._MQTT_PORT)
         #STATUS
         self._mqtt_config_send=False
+        #START MQTT client thread
+        self._mqtt_client.loop_start()
+
         
     def loop(self) -> None:
         while(True) :
