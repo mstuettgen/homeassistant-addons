@@ -1,14 +1,16 @@
 '''
 Creates an MQTT Device in Homeassistant and publishes Data from Senec Website as MQTT sensor data
 '''
-
+import os
 import paho.mqtt.client as mqtt
 import json
 import time
 import logging
 from senec_webgrabber import SenecWebGrabber
+from dotenv import load_dotenv
+load_dotenv()
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
@@ -18,86 +20,94 @@ def main():
 class SenecMQTTDevice():
 
     def __init__(self) -> None:
-        #PARAMS Todo: Make configurable
-        self._MQTT_USERNAME = ""  # your mqtt username
-        self._MQTT_PASSWORD =  "" # your mqtt password
-        self._MQTT_HOST = "" # IP adress of homeassitant when using home assistant mqtt broker, else IP adress of broker
-        self._MQTT_PORT = 1883 # default MQTT port
-        self._TOPIC_PREFIX = "homeassistant/sensor/" # topic that our mqtt data is published to
-        self._SENSOR_NAME_PREFIX = "senec" #arbitrary, used for sensor name generation. results in e.g. "senec_acculevel_now" as sensorname
-        self._DEVICE_NAME = "Senec Home V4" #arbitrary, used to generate the name of the MQTT device in HA
-        self._DEVICE_IDENTIFIER = "XXXXXXXXXXXXXXX" #serial number of your senec (can be looked up in app), used for generation of entity unique ids
-        self._DEVICE_MANUFACTURER = "Senec" #arbitrary, will be shown in MQTT device information
-        self._DEVICE_MODEL = "Home V4" #arbitrary, will be shown in MQTT device information
+        self._MQTT_USERNAME = os.getenv('MQTT_USERNAME')
+        self._MQTT_PASSWORD =  os.getenv('MQTT_PASSWORD')
+        self._MQTT_HOST = os.getenv('MQTT_HOST')
+        self._MQTT_PORT = int(os.getenv('MQTT_PORT'))
+        self._TOPIC_PREFIX = os.getenv('MQTT_TOPIC_PREFIX')
+        self._SENSOR_NAME_PREFIX = os.getenv('MQTT_SENSOR_NAME_PREFIX')
+        self._DEVICE_NAME = os.getenv('MQTT_DEVICE_NAME')
+        self._DEVICE_IDENTIFIER = os.getenv('MQTT_DEVICE_IDENTIFIER')
+        self._DEVICE_MANUFACTURER = os.getenv('MQTT_DEVICE_MANUFACTURER')
+        self._DEVICE_MODEL = os.getenv('MQTT_DEVICE_MODEL')
         self._DEVINCE_INFO = {
             "identifiers": [self._DEVICE_IDENTIFIER], 
             "name":  self._DEVICE_NAME,
             "manufacturer": self._DEVICE_MANUFACTURER, 
             "model": self._DEVICE_MODEL
         }
-        #Translation from API keys to friendly names in home assistant
         self._FRIENDLY_NAMES = {
-            "accuexport_total" : "Akku-Einspeisung Gesamt",
-            "accuexport_today" : "Akku-Einspeisung Heute",
-            "accuexport_now" : "Akku-Einspeisung Momentanwert",
-            "accuimport_total" : "Akku-Bezug Gesamt" ,
-            "accuimport_today" : "Akku-Bezug Heute", 
-            "accuimport_now" : "Akku-Bezug Momentanwert",
-            "gridimport_total" : "Netzstrom-Bezug Gesamt", 
-            "gridimport_today" : "Netzstrom-Bezug Heute", 
-            "gridimport_now" : "Netzstrom-Bezug Momentanwert",
-            "gridexport_total" : "Netzstrom-Einspeisung Gesamt", 
-            "gridexport_today" : "Netzstrom-Einspeisung Heute", 
-            "gridexport_now" : "Netzstrom-Einspeisung Momentanwert",
-            "powergenerated_total" : "PV-Erzeugung Gesamt",
-            "powergenerated_today" : "PV-Erzeugung Heute",
-            "powergenerated_now" : "PV-Erzeugung Momentanwert",
+            "accuexport_total" : "Akku Entladung Gesamt",
+            "accuexport_today" : "Akku Entladung Heute",
+            "accuexport_now" : "Akku Entladung Momentanwert",
+            "accuimport_total" : "Akku Beladung Gesamt" ,
+            "accuimport_today" : "Akku Beladung Heute", 
+            "accuimport_now" : "Akku Beladung Momentanwert",
+            "gridimport_total" : "Netzstrom Bezug Gesamt", 
+            "gridimport_today" : "Netzstrom Bezug Heute", 
+            "gridimport_now" : "Netzstrom Bezug Momentanwert",
+            "gridexport_total" : "Netzstrom Einspeisung Gesamt", 
+            "gridexport_today" : "Netzstrom Einspeisung Heute", 
+            "gridexport_now" : "Netzstrom Einspeisung Momentanwert",
+            "powergenerated_total" : "PV Erzeugung Gesamt",
+            "powergenerated_today" : "PV Erzeugung Heute",
+            "powergenerated_now" : "PV Erzeugung Momentanwert",
             "consumption_total" : "Stromverbrauch Gesamt", 
             "consumption_today" : "Stromverbrauch Heute",
             "consumption_now" : "Stromverbrauch Momentanwert",
             "acculevel_now" : "Akku Fuellstand Momentanwert",
-            "acculevel_today" : "Akku Fuellstand Heute", #available in API, but useless ? 
+            "acculevel_today" : "Akku Fuellstand Heute",
         }    
 
-
-        self._MQTT_SLEEP_TIME = 0.01 # [s] interval between sending mqtt messages
-        self._UPDATE_INTERVAL = 30 # [s] poll interval from senec api
+        self._MQTT_SLEEP_TIME = 0.01 # [s] between sending messages
+        self._RECONNECT_INTERVAL = 5 # [s] auto-reconnect interval
+        self._UPDATE_INTERVAL = 30 # [s] webgrabber interval
         
         #WEBGRABBER
         self._webgrabber = SenecWebGrabber()
         #MQTT
         self._mqtt_client = mqtt.Client()
+        self._mqtt_client.on_connect = self.on_connect
+        self._mqtt_client.on_disconnect = self.on_disconnect
         self._mqtt_client.username_pw_set(self._MQTT_USERNAME, self._MQTT_PASSWORD)
-        self._mqtt_client.connect(self._MQTT_HOST, self._MQTT_PORT)
-        #STATUS
-        self._mqtt_config_send=False
-        #START MQTT client thread
         self._mqtt_client.loop_start()
 
-        
+    def connect(self) -> None:
+         try:
+              logger.info("Trying to connect to MQTT broker....")
+              self._mqtt_client.connect(self._MQTT_HOST, self._MQTT_PORT)
+              time.sleep(3)
+         except ConnectionRefusedError:
+              logger.info("Unable to connect - Connection refused. Trying again in " +str(self._RECONNECT_INTERVAL)+ "seconds")
+              time.sleep(self._RECONNECT_INTERVAL)
+              
+    def on_connect(client, userdata, flags, reason_code, properties):
+         logger.info("Connection to broker successfull! rc=" +str(reason_code))
+
+    def on_disconnect(self, client, userdata, reason_code):
+         logger.info("Disconnected from broker! rc=" + str(reason_code))
+
     def loop(self) -> None:
         while(True) :
-            self.update()
-            self.send()
-            time.sleep(self._UPDATE_INTERVAL)
-            
-        
+            if (self._mqtt_client.is_connected()):
+                 self.update()
+                 self.send()
+                 time.sleep(self._UPDATE_INTERVAL)
+            else:
+                 self.connect()
+                  
     def send(self) -> None:
-        if not self._mqtt_config_send:
-            self.send_config()
+        self.send_config()
         self.send_states()
-
 
     def update(self) -> None:
         self._webgrabber.update()
-
 
     def send_config(self) -> None:
         logger.debug("send_config()")
         self.send_battery_config()
         self.send_power_config()
         self.send_energy_config()
-        self._mqtt_config_send=True   
 
     def send_states(self) -> None:
         logger.debug("send_states()")
