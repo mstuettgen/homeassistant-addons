@@ -7,7 +7,7 @@ I is not really an "addon" at this point, it's more of a working prototype.
 ### Requirements
 - An MQTT Broker, e.g. mosquitto. Can be installed by going to Settings -> Addons -> Addon Store -> Mosquitto
 - The HA MQTT Integration. Can be installed by going to Settings -> Devices and Services -> Add Integration -> MQTT. 
-When setting up the MQTT integration, use "core-mosquitto" as MQTT broker when you are using the Mosquitto-Addon. Else use te IP adress of your own MQTT broker
+When setting up the MQTT integration, use "core-mosquitto" as MQTT broker when you are using the Mosquitto-Addon. Else use the IP adress of your own MQTT broker
 
 ### Configuration 
 The configuration is done in the .env file. Change everything accordingly to your setup. Example Configuration:
