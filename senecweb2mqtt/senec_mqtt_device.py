@@ -62,6 +62,9 @@ class SenecMQTTDevice():
         self._MQTT_SLEEP_TIME = 0.01 # [s] between sending messages
         self._RECONNECT_INTERVAL = 5 # [s] auto-reconnect interval
         self._UPDATE_INTERVAL = 30 # [s] webgrabber interval
+
+        #CONFIG STATUS
+        self._config_send=False
         
         #WEBGRABBER
         self._webgrabber = SenecWebGrabber()
@@ -97,20 +100,22 @@ class SenecMQTTDevice():
                  self.connect()
                   
     def send(self) -> None:
-        self.send_config()
+        if not self._config_send:
+             self.send_config()
         self.send_states()
 
     def update(self) -> None:
         self._webgrabber.update()
 
     def send_config(self) -> None:
-        logger.debug("send_config()")
+        logger.debug("Sending Config...")
         self.send_battery_config()
         self.send_power_config()
         self.send_energy_config()
+        self._config_send=True
 
     def send_states(self) -> None:
-        logger.debug("send_states()")
+        logger.debug("Sending States...")
         self.send_battery_states()
         self.send_power_states()
         self.send_energy_states()        
@@ -127,7 +132,7 @@ class SenecMQTTDevice():
             logger.debug("config_topic: " + config_topic)
             logger.debug("state_topic: " + state_topic)
             logger.debug("config_payload: " + str(config_payload))
-            self._mqtt_client.publish(config_topic,json.dumps(config_payload))
+            self._mqtt_client.publish(config_topic,json.dumps(config_payload),retain=True)
             time.sleep(self._MQTT_SLEEP_TIME)
            
     def send_power_config(self) -> None:
@@ -141,7 +146,7 @@ class SenecMQTTDevice():
             logger.debug("config_topic: " + config_topic)
             logger.debug("state_topic: " + state_topic)
             logger.debug("config_payload: " + str(config_payload))
-            self._mqtt_client.publish(config_topic,json.dumps(config_payload))
+            self._mqtt_client.publish(config_topic,json.dumps(config_payload),retain=True)
             time.sleep(self._MQTT_SLEEP_TIME)
             
 
@@ -156,7 +161,7 @@ class SenecMQTTDevice():
             logger.debug("config_topic: " + config_topic)
             logger.debug("state_topic: " + state_topic)
             logger.debug("config_payload: " + str(config_payload))
-            self._mqtt_client.publish(config_topic,json.dumps(config_payload))
+            self._mqtt_client.publish(config_topic,json.dumps(config_payload),retain=True)
             time.sleep(self._MQTT_SLEEP_TIME)
           
 
