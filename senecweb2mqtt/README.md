@@ -10,29 +10,26 @@ I is not really an "addon" at this point, it's more of a working prototype.
 When setting up the MQTT integration, use "core-mosquitto" as MQTT broker when you are using the Mosquitto-Addon. Else use te IP adress of your own MQTT broker
 
 ### Configuration 
-#### "senec_webgrabber.py" :
-
-enter your senec credentials in the following lines (example):
+The configuration is done in the .env file. Change everything accordingly to your setup. Example Configuration:
+#### ".env" :
 ```
-self._SENEC_USERNAME = "myawesomename@mail.com" # your senec login username
-self._SENEC_PASSWORD = "mysupersafesenecpw" # your senec password
+# MQTT parameters
+MQTT_USERNAME='your-mqtt-username'
+MQTT_PASSWORD='your-mqtt-password'
+MQTT_HOST='192.168.1.2'
+MQTT_PORT=1883
+MQTT_TOPIC_PREFIX='homeassistant/sensor/'
+MQTT_SENSOR_NAME_PREFIX='senec' #arbitrary, results in e.g. "senec_acculevel_now" as sensorname
+MQTT_DEVICE_NAME='Senec Home V4' #arbitrary, name of MQTT device in home assistant
+MQTT_DEVICE_IDENTIFIER='xx-xxxxxxxx' #serial number of device, used for unique entity ids
+MQTT_DEVICE_MANUFACTURER='Senec' #arbitrary, mqtt device information
+MQTT_DEVICE_MODEL='Home V4' #arbitrary, mqtt device information
+
+# Credentials for Senec Website
+SENEC_USERNAME='mail@example.com'
+SENEC_PASSWORD='supersafepassword'
 ```
 
-#### "senec_mqtt_device.py" :
-
-enter your device information in the following lines (example):
-```
-self._MQTT_USERNAME = "homeassistant"  # your mqtt username
-self._MQTT_PASSWORD =  "homeassistant" # your mqtt password
-self._MQTT_HOST = "192.168.1.50" # IP adress of homeassitant when using home assistant mqtt broker, else IP adress of broker
-self._MQTT_PORT = 1883 # default MQTT port, IMPORTANT, must be Number, not a String!
-
-self._SENSOR_NAME_PREFIX = "senec" #arbitrary, used for sensor name generation. results in e.g. "senec_acculevel_now" as sensorname
-self._DEVICE_NAME = "Senec Home V4" #arbitrary, used to generate the name of the MQTT device in HA
-self._DEVICE_IDENFIER = "XXXXXXXXXXXXXXX" #serial number of your senec (can be looked up in app), used for generation of entity unique ids
-self._DEVICE_MANUFACTURER = "Senec" #arbitrary, will be shown in MQTT device information
-self._DEVICE_MODEL = "Home V4" #arbitrary, will be shown in MQTT device information
-```
 
 ## Manual start/stop
 run
