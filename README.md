@@ -13,4 +13,4 @@ If you want to use addons from this repository, you must perform the following s
 
 ## List of Addons
 
-* [SenecWeb2MQTT](senecweb2mqtt/README.md): Grabs PV stats from mein-senec.de and publishes it as sensor data to Homeassistant as MQTT data
+* [SenecWeb2MQTT](senecweb2mqtt/README.md): Grabs PV stats from mein-senec.de and publishes it as MQTT sensor data to Homeassistant
