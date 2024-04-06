@@ -1,0 +1,38 @@
+name: "Senec Web2MQTT"
+description: "Reads data from mein-senec.de and publishes it as MQTT sensor data to home assistant"
+version: "1.0.0"
+slug: "senecweb2mqtt"
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+options:
+  SENEC_USERNAME: null
+  SENEC_PASSWORD: null
+  MQTT_USERNAME: null
+  MQTT_PASSWORD: null
+  MQTT_HOST: "core-mosquitto"
+  MQTT_PORT: 1883
+  MQTT_TOPIC_PREFIX: "homeassistant/sensor/"
+  MQTT_SENSOR_NAME_PREFIX : "senec"
+  MQTT_DEVICE_NAME : 'Senec Home V4'
+  MQTT_DEVICE_IDENTIFIER : 'xx-xxxxxxxx'
+  MQTT_DEVICE_MANUFACTURER : 'Senec'
+  MQTT_DEVICE_MODEL : 'Home V4'
+
+schema:
+  SENEC_USERNAME: email
+  SENEC_PASSWORD: password
+  MQTT_USERNAME: password
+  MQTT_PASSWORD: password
+  MQTT_HOST: str
+  MQTT_PORT: int
+  MQTT_TOPIC_PREFIX: str
+  MQTT_SENSOR_NAME_PREFIX : str
+  MQTT_DEVICE_NAME : str
+  MQTT_DEVICE_IDENTIFIER : str
+  MQTT_DEVICE_MANUFACTURER : str
+  MQTT_DEVICE_MODEL : str

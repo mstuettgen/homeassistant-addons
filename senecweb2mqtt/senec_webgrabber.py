@@ -6,8 +6,6 @@ import requests
 import json
 import logging
 import time
-from dotenv import load_dotenv
-load_dotenv()
 
 
 logging.basicConfig(level=logging.INFO)
@@ -20,9 +18,11 @@ def main():
 class SenecWebGrabber:
     def __init__(self) -> None:
 
+        #OPTIONS
+        self._options = self.read_options()
         #SENEC API
-        self._SENEC_USERNAME = os.getenv('SENEC_USERNAME')
-        self._SENEC_PASSWORD = os.getenv('SENEC_PASSWORD')
+        self._SENEC_USERNAME = self._options['SENEC_USERNAME']
+        self._SENEC_PASSWORD = self._options['SENEC_PASSWORD']
         self._SENEC_AUTH_URL = "https://mein-senec.de/auth/login"
         self._SENEC_API_OVERVIEW_URL = "https://mein-senec.de/endkunde/api/status/getstatusoverview.php?anlageNummer=0"
         self._SENEC_API_URL_START="https://mein-senec.de/endkunde/api/status/getstatus.php?type="
@@ -52,6 +52,11 @@ class SenecWebGrabber:
         #WEBSESSION
         self._session = requests.Session()
 
+    def read_options(self) -> None:
+        """ Read Options from Homeassitant configuration UI """
+        with open('/data/options.json', mode="r") as options_file:
+            options = json.load(options_file) 
+        return options
 
     def authenticate(self) -> None:
         auth_payload = {

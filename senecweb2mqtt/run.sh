@@ -1,3 +1,3 @@
 #!/usr/bin/with-contenv bashio
 
-echo "Hello world!"
+python3 ./senec_mqtt_device.py

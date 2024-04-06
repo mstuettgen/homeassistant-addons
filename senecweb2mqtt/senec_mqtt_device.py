@@ -7,8 +7,7 @@ import json
 import time
 import logging
 from senec_webgrabber import SenecWebGrabber
-from dotenv import load_dotenv
-load_dotenv()
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,16 +19,20 @@ def main():
 class SenecMQTTDevice():
 
     def __init__(self) -> None:
-        self._MQTT_USERNAME = os.getenv('MQTT_USERNAME')
-        self._MQTT_PASSWORD =  os.getenv('MQTT_PASSWORD')
-        self._MQTT_HOST = os.getenv('MQTT_HOST')
-        self._MQTT_PORT = int(os.getenv('MQTT_PORT'))
-        self._TOPIC_PREFIX = os.getenv('MQTT_TOPIC_PREFIX')
-        self._SENSOR_NAME_PREFIX = os.getenv('MQTT_SENSOR_NAME_PREFIX')
-        self._DEVICE_NAME = os.getenv('MQTT_DEVICE_NAME')
-        self._DEVICE_IDENTIFIER = os.getenv('MQTT_DEVICE_IDENTIFIER')
-        self._DEVICE_MANUFACTURER = os.getenv('MQTT_DEVICE_MANUFACTURER')
-        self._DEVICE_MODEL = os.getenv('MQTT_DEVICE_MODEL')
+
+        #OPTIONS
+        self._options = self.read_options()
+
+        self._MQTT_USERNAME = self._options['MQTT_USERNAME']
+        self._MQTT_PASSWORD =  self._options['MQTT_PASSWORD']
+        self._MQTT_HOST = self._options['MQTT_HOST']
+        self._MQTT_PORT = int(self._options['MQTT_PORT'])
+        self._TOPIC_PREFIX = self._options['MQTT_TOPIC_PREFIX']
+        self._SENSOR_NAME_PREFIX = self._options['MQTT_SENSOR_NAME_PREFIX']
+        self._DEVICE_NAME = self._options['MQTT_DEVICE_NAME']
+        self._DEVICE_IDENTIFIER = self._options['MQTT_DEVICE_IDENTIFIER']
+        self._DEVICE_MANUFACTURER = self._options['MQTT_DEVICE_MANUFACTURER']
+        self._DEVICE_MODEL = self._options['MQTT_DEVICE_MODEL']
         self._DEVINCE_INFO = {
             "identifiers": [self._DEVICE_IDENTIFIER], 
             "name":  self._DEVICE_NAME,
@@ -74,6 +77,12 @@ class SenecMQTTDevice():
         self._mqtt_client.on_disconnect = self.on_disconnect
         self._mqtt_client.username_pw_set(self._MQTT_USERNAME, self._MQTT_PASSWORD)
         self._mqtt_client.loop_start()
+
+    def read_options(self) -> None:
+        """ Read Options from Homeassitant configuration UI """
+        with open('/data/options.json', mode="r") as options_file:
+            options = json.load(options_file) 
+        return options
 
     def connect(self) -> None:
          try:

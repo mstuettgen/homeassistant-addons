@@ -1,8 +1,6 @@
 # Senec Web2MQTT
 Reads stats from Senec Web API and publishes them as MQTT device to home assistant
 
-## DISCLAIMER
-I is not really an "addon" at this point, it's more of a working prototype.
 
 ### Requirements
 - An MQTT Broker, e.g. mosquitto. Can be installed by going to Settings -> Addons -> Addon Store -> Mosquitto
@@ -10,63 +8,34 @@ I is not really an "addon" at this point, it's more of a working prototype.
 When setting up the MQTT integration, use "core-mosquitto" as MQTT broker when you are using the Mosquitto-Addon. Else use the IP adress of your own MQTT broker
 
 ### Configuration 
-The configuration is done in the .env file. Change everything accordingly to your setup. Example Configuration:
-#### ".env" :
-```
-# MQTT parameters
-MQTT_USERNAME='your-mqtt-username'
-MQTT_PASSWORD='your-mqtt-password'
-MQTT_HOST='192.168.1.2'
-MQTT_PORT=1883
-MQTT_TOPIC_PREFIX='homeassistant/sensor/'
-MQTT_SENSOR_NAME_PREFIX='senec' #arbitrary, results in e.g. "senec_acculevel_now" as sensorname
-MQTT_DEVICE_NAME='Senec Home V4' #arbitrary, name of MQTT device in home assistant
-MQTT_DEVICE_IDENTIFIER='xx-xxxxxxxx' #serial number of device, used for unique entity ids
-MQTT_DEVICE_MANUFACTURER='Senec' #arbitrary, mqtt device information
-MQTT_DEVICE_MODEL='Home V4' #arbitrary, mqtt device information
+The configuration is done in the configuration tab of the addon. All available options are described below:
 
-# Credentials for Senec Website
+```
+# Credentials for Senec Website (mein-senec.de)
 SENEC_USERNAME='mail@example.com'
 SENEC_PASSWORD='supersafepassword'
+
+# MQTT parameters for connection with broker
+MQTT_USERNAME='exampleuser'
+MQTT_PASSWORD='anotherpassword'
+MQTT_HOST='core-mosquitto'
+MQTT_PORT=1883
+
+# Default HA MQTT topic, only change when you know what you are doing
+MQTT_TOPIC_PREFIX='homeassistant/sensor/'
+
+# An arbitrary sensor name prefix, results in e.g. "senec_acculevel_now" as sensorname in HA
+MQTT_SENSOR_NAME_PREFIX='senec' 
+# An arbitrary name for the MQTT device in home assistant
+MQTT_DEVICE_NAME='Senec Home V4' 
+# Serial number of your Senec Device, needed for unique entity ids
+MQTT_DEVICE_IDENTIFIER='xx-xxxxxxxx'
+# An arbitrary name of the device Manufacturer (MQTT device info)
+MQTT_DEVICE_MANUFACTURER='Senec' 
+# An arbitrary name of the device Model (MQTT device info)
+MQTT_DEVICE_MODEL='Home V4'
 ```
 
-
-## Manual start/stop
-run
-```bash
-python3 senec_mqtt_device.py
-``` 
-
-## Setting up a systemd service (Debian)
-create a file 
-```
-/etc/systemd/system/senecweb2mqtt.service
-```
-with content
-```
-[Unit]
-Description=Senec Web2MQTT
-After=network.target
-StartLimitIntervalSec=0
-
-[Service]
-Type=simple
-Restart=always
-RestartSec=30
-TimeoutStopSec=15
-User=pi <- Change this to your actual username
-ExecStart=python3 <abs_path_to>/senec_mqtt_device.py <- change path here accordingly
-
-[Install]
-WantedBy=multi-user.target
-```
-
-then
-```
-sudo systemctl enable senecweb2mqtt.service
-sudo systemctl start senecweb2mqtt.service
-sudo systemctl status senecweb2mqtt.service
-```
 
 ![grafik](https://github.com/mstuettgen/homeassistant-addons/assets/10927858/a0d2c28b-7ee6-4267-847b-80b5509108c0)
 
