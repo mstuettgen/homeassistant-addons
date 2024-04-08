@@ -1,5 +1,5 @@
 # Senec Web2MQTT
-Reads stats from Senec Web API and publishes them as MQTT device to home assistant
+Reads stats from Senec Web API and publishes them as MQTT device to home assistant. Works with Senec Home V2 / V3 / V4.
 
 
 ### Requirements
